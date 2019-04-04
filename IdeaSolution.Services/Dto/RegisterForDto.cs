@@ -26,26 +26,26 @@ namespace IdeaSolution.Services.Dto
 
         public DateTime LastActive { get; set; }
         [Required]
-        public string Firstname { get; set; }
-        [Required]
-        public string Lastname { get; set; }
+        public string Othername { get; set; }
         
-        public string UserName { get; set; }
         [Required]
         public string PhoneNumber { get; set; }
 
         public string[] Roles { get; set; }
+        [Required]
+        public string UserName { get; set; }
+        public string Fullname => $"{UserName} {Othername}".Trim();
 
-        public int AccessFailedCount { get; set; }
-        public bool EmailConfirmed { get; set; }
-        public bool LockoutEnabled { get; set; }
-        public bool TwoFactorEnable { get; set; }
-        public bool PhoneNumberConfirmed { get; set; }
-        public DateTimeOffset LockoutEnd { get; set; }
-        public string NormalizedEmail { get; set; }
-        public string NormalizedUserName { get; set; }
-        public string PasswordHash { get; set; }
-        public string ConcurrencyStamp { get; set; }
+        //public int AccessFailedCount { get; set; }
+        //public bool EmailConfirmed { get; set; }
+        //public bool LockoutEnabled { get; set; }
+        //public bool TwoFactorEnable { get; set; }
+        //public bool PhoneNumberConfirmed { get; set; }
+        //public DateTimeOffset LockoutEnd { get; set; }
+        //public string NormalizedEmail { get; set; }
+        //public string NormalizedUserName { get; set; }
+        //public string PasswordHash { get; set; }
+        //public string ConcurrencyStamp { get; set; }
 
         public RegisterForDto()
         {

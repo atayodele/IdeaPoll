@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using IdeaSolution.Data.IGeneric.Auth;
@@ -11,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IdeaSolution.API.Controllers
 {
@@ -22,17 +26,20 @@ namespace IdeaSolution.API.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public AccountController(
             IAuthRepository repo,
             IConfiguration configuration,
             IMapper mapper,
-            UserManager<AppUser> userManager)
+            UserManager<AppUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _repo = repo;
             _configuration = configuration;
             _mapper = mapper;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterForDto userRegisterDto)
@@ -43,7 +50,6 @@ namespace IdeaSolution.API.Controllers
                 ModelState.AddModelError("Email", "Email is already taken");
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            //var userToCreate = new AppUser().Assign(userRegisterDto);
             var userToCreate = _mapper.Map<AppUser>(userRegisterDto);
             var createUser = await _userManager.CreateAsync(userToCreate, userRegisterDto.Password);
             //var userToReturn = _mapper.Map<UserForDetailedDto>(createUser);
@@ -53,6 +59,38 @@ namespace IdeaSolution.API.Controllers
                 return Ok(new { email = userRegisterDto.Email, status = 1, message = "Registration Successful" });
             }
             return BadRequest();
+        }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody]UserForLoginDto userForLoginDto)
+        {
+            var userFromRepo = await _repo.Login(userForLoginDto.Email, userForLoginDto.Password);
+            if (userFromRepo == null)
+                return Unauthorized();
+            var userRoles = await _userManager.GetRolesAsync(userFromRepo);
+            foreach(string roleName in userRoles)
+            {
+                Identity
+            }
+            //generate token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration.GetSection("AppSettings:Token").Value);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
+                    new Claim(ClaimTypes.Name, userFromRepo.Fullname),
+                    new Claim(ClaimTypes.Email, userFromRepo.Email)
+                }),
+                Expires = DateTime.Now.AddDays(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            var user = _mapper.Map<UserForListDto>(userFromRepo);
+
+            return Ok(new { tokenString, user });
         }
     }
 }

@@ -8,8 +8,8 @@ namespace IdeaSolution.Data.Models
 {
     public class AppUser : IdentityUser
     {
-        public string Firstname { get; set; }
-        public string Lastname { get; set; }
+        public string Fullname { get; set; }
+        public string Othername { get; set; }
         public string Gender { get; set; }
         public DateTime DateOfBirth { get; set; }
         public DateTime Created { get; set; }
