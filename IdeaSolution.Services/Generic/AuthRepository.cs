@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,13 +15,29 @@ namespace IdeaSolution.Services.Generic
     {
         private readonly DataContext _context;
         private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public AuthRepository(DataContext context, 
-            UserManager<AppUser> userManager)
+            UserManager<AppUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _context = context;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
+
+        public async Task<IdentityRole> GetRole(string id)
+        {
+            var role = await _roleManager.Roles.FirstOrDefaultAsync(x => x.Id == id);
+            return role;
+        }
+
+        public async Task<IEnumerable<IdentityRole>> GetRoles()
+        {
+            var roles = await _roleManager.Roles.ToListAsync();
+            return roles;
+        }
+
         public async Task<AppUser> Login(string email, string password)
         {
             var user = await _userManager.FindByEmailAsync(email);

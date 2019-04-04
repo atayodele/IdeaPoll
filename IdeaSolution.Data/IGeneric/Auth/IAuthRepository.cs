@@ -1,4 +1,5 @@
 ﻿using IdeaSolution.Data.Models;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,5 +11,7 @@ namespace IdeaSolution.Data.IGeneric.Auth
     {
         Task<AppUser> Login(string email, string password);
         Task<bool> UserExists(string email);
+        Task<IEnumerable<IdentityRole>> GetRoles();
+        Task<IdentityRole> GetRole(string id);
     }
 }

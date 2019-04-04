@@ -55,7 +55,8 @@ namespace IdeaSolution.API.Controllers
             //var userToReturn = _mapper.Map<UserForDetailedDto>(createUser);
             if (createUser.Succeeded)
             {
-                await _userManager.AddToRoleAsync(userToCreate, "User");
+                //await _userManager.AddToRoleAsync(userToCreate, "User");
+                await _userManager.AddToRolesAsync(userToCreate, userRegisterDto.Roles);
                 return Ok(new { email = userRegisterDto.Email, status = 1, message = "Registration Successful" });
             }
             return BadRequest();
@@ -67,30 +68,34 @@ namespace IdeaSolution.API.Controllers
             if (userFromRepo == null)
                 return Unauthorized();
             var userRoles = await _userManager.GetRolesAsync(userFromRepo);
-            foreach(string roleName in userRoles)
-            {
-                Identity
-            }
             //generate token
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("AppSettings:Token").Value);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
+            var claims = new List<Claim>
+                    {
+                    new Claim(JwtRegisteredClaimNames.Sub, userFromRepo.Email),
                     new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
-                    new Claim(ClaimTypes.Name, userFromRepo.Fullname),
-                    new Claim(ClaimTypes.Email, userFromRepo.Email)
-                }),
-                Expires = DateTime.Now.AddDays(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    };
+
+            var tokenDescriptor = new JwtSecurityToken(
+                    issuer: "http://gosmarticle.com",
+                    audience: "http://api.gosmarticle.com",
+                    expires: DateTime.Now.AddDays(1),
+                    claims: claims,
+                    signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+                    );
+            foreach (var roleName in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, roleName));
+            }
+            var token = tokenHandler.WriteToken(tokenDescriptor);
+
+            var Expires = tokenDescriptor.ValidTo;
 
             var user = _mapper.Map<UserForListDto>(userFromRepo);
 
-            return Ok(new { tokenString, user });
+            return Ok(new { token, user, roles = userRoles});
         }
     }
 }
