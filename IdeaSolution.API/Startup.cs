@@ -38,6 +38,7 @@ namespace IdeaSolution.API
             services.AddAutoMapper();
             services.AddCors();
             services.AddScoped<IRepo, Repo>();
+            services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -49,10 +50,6 @@ namespace IdeaSolution.API
                         ValidateAudience = false
                     };
                 });
-            services.AddMvc().AddJsonOptions(opt =>
-            {
-                opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            });
             services.AddIdentity<AppUser, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = false;
@@ -68,7 +65,10 @@ namespace IdeaSolution.API
             })
                 .AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders()
                 .AddPasswordValidator<DoesNotContainPasswordValidator<AppUser>>();
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(opt =>
+            {
+                opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

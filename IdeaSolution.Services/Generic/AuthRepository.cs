@@ -21,14 +21,15 @@ namespace IdeaSolution.Services.Generic
             _context = context;
             _userManager = userManager;
         }
-        public Task<AppUser> Login(string email, string password)
+        public async Task<AppUser> Login(string email, string password)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<AppUser> Register(AppUser user, string password)
-        {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null && await _userManager.IsLockedOutAsync(user))
+                return null;
+            if (!await _userManager.CheckPasswordAsync(user, password))
+                return null;
+            //Auth successfull
+            return user;
         }
 
         public async Task<bool> UserExists(string email)

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IdeaSolution.API.Dto
+namespace IdeaSolution.Services.Dto
 {
     public class LoginForDto
     {

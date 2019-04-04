@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IdeaSolution.API.Dto
+namespace IdeaSolution.Services.Dto
 {
     public class RegisterForDto
     {
@@ -29,6 +29,23 @@ namespace IdeaSolution.API.Dto
         public string Firstname { get; set; }
         [Required]
         public string Lastname { get; set; }
+        
+        public string UserName { get; set; }
+        [Required]
+        public string PhoneNumber { get; set; }
+
+        public string[] Roles { get; set; }
+
+        public int AccessFailedCount { get; set; }
+        public bool EmailConfirmed { get; set; }
+        public bool LockoutEnabled { get; set; }
+        public bool TwoFactorEnable { get; set; }
+        public bool PhoneNumberConfirmed { get; set; }
+        public DateTimeOffset LockoutEnd { get; set; }
+        public string NormalizedEmail { get; set; }
+        public string NormalizedUserName { get; set; }
+        public string PasswordHash { get; set; }
+        public string ConcurrencyStamp { get; set; }
 
         public RegisterForDto()
         {
