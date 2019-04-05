@@ -5,6 +5,7 @@ using AutoMapper;
 using IdeaSolution.Data;
 using IdeaSolution.Data.IGeneric;
 using IdeaSolution.Data.IGeneric.Auth;
+using IdeaSolution.Data.IGeneric.UserRepo;
 using IdeaSolution.Data.Models;
 using IdeaSolution.Services.Generic;
 using IdeaSolution.Services.Helpers;
@@ -39,6 +40,7 @@ namespace IdeaSolution.API
             services.AddCors();
             services.AddScoped<IRepo, Repo>();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -65,9 +67,18 @@ namespace IdeaSolution.API
             })
                 .AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders()
                 .AddPasswordValidator<DoesNotContainPasswordValidator<AppUser>>();
+
             services.AddMvc().AddJsonOptions(opt =>
             {
                 opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
+
+            //add authorization
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireLoggedIn", policy => policy.RequireRole("User").RequireAuthenticatedUser());
+
+                options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("User", "Manager").RequireAuthenticatedUser());
             });
         }
 

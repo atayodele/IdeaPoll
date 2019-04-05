@@ -22,6 +22,7 @@ namespace IdeaSolution.Services.Helpers
                 });
             CreateMap<IdentityRole, RoleForListDto>();
             CreateMap<RoleForDto, IdentityRole>();
+            CreateMap<RoleForUpdateDto, IdentityRole>();
         }
     }
 }

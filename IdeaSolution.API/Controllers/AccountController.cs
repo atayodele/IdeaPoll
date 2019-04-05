@@ -77,7 +77,10 @@ namespace IdeaSolution.API.Controllers
                     new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                     };
-
+            foreach (var roleName in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, roleName));
+            }
             var tokenDescriptor = new JwtSecurityToken(
                     issuer: "http://gosmarticle.com",
                     audience: "http://api.gosmarticle.com",
@@ -85,10 +88,7 @@ namespace IdeaSolution.API.Controllers
                     claims: claims,
                     signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
                     );
-            foreach (var roleName in userRoles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, roleName));
-            }
+            
             var token = tokenHandler.WriteToken(tokenDescriptor);
 
             var Expires = tokenDescriptor.ValidTo;
