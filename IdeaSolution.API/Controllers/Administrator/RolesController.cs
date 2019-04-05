@@ -7,6 +7,7 @@ using AutoMapper;
 using IdeaSolution.Data.IGeneric;
 using IdeaSolution.Data.IGeneric.Auth;
 using IdeaSolution.Data.IGeneric.UserRepo;
+using IdeaSolution.Data.Models;
 using IdeaSolution.Services.Dto;
 using IdeaSolution.Services.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,7 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IdeaSolution.API.Controllers
+namespace IdeaSolution.API.Controllers.Administrator
 {
     
     [Route("api/[controller]")]
@@ -26,17 +27,20 @@ namespace IdeaSolution.API.Controllers
         private readonly IMapper _mapper;
         private readonly IAuthRepository _auth;
         private readonly IRepo _repo;
+        private readonly UserManager<AppUser> _userManager;
 
         public RolesController(
             RoleManager<IdentityRole> roleManager,
             IMapper mapper,
             IAuthRepository auth,
-            IRepo repo)
+            IRepo repo,
+            UserManager<AppUser> userManager)
         {
             _roleManager = roleManager;
             _mapper = mapper;
             _auth = auth;
             _repo = repo;
+            _userManager = userManager;
         }
         [HttpPost("add")]
         public async Task<IActionResult> AddRole([FromBody] RoleForDto roleForDto)
@@ -68,6 +72,8 @@ namespace IdeaSolution.API.Controllers
         public async Task<IActionResult> GetRole(string id)
         {
             var role = await _auth.GetRole(id);
+            if (role == null)
+                return BadRequest("Role is not found");
             var roleToReturn = _mapper.Map<RoleForListDto>(role);
             return Ok(roleToReturn);
         }
@@ -79,7 +85,6 @@ namespace IdeaSolution.API.Controllers
             var role = await _auth.GetRole(id);
             if (role == null)
                 return NotFound($"Could not found role with an ID of {id}");
-            //_mapper.Map(roleForUpdateDto, role);
             role.Name = roleForUpdateDto.Name;
             role.NormalizedName = roleForUpdateDto.Name;
             var res = await _roleManager.UpdateAsync(role);
@@ -99,6 +104,16 @@ namespace IdeaSolution.API.Controllers
             if (delete.Succeeded)
                 return Ok("Role Deleted Successfully");
             return BadRequest($"Failed to delete role with Id {id}");
+        }
+        [HttpGet("GetUserByRole/{id}")]
+        public async Task<IActionResult> GetUserByRole(string id)
+        {
+            var role = await _auth.GetRole(id);
+            if (role == null)
+                return NotFound($"Could not found role with an ID of {id}");
+            var findUser = await _userManager.GetUsersInRoleAsync(role.Name);
+            var roleToReturn = _mapper.Map<IEnumerable<UserRoleListDto>>(findUser);
+            return Ok(roleToReturn);
         }
     }
 }

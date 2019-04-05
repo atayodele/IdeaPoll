@@ -4,9 +4,8 @@ using System.Text;
 
 namespace IdeaSolution.Services.Dto
 {
-    public class UserForDetailedDto
+    public class UserRoleListDto
     {
-        public string Id { get; set; }
         public string Email { get; set; }
         public string Gender { get; set; }
         public int Age { get; set; }
@@ -18,8 +17,5 @@ namespace IdeaSolution.Services.Dto
         public string PhoneNumber { get; set; }
         public string Firstname { get; set; }
         public string Fullname => $"{Firstname} {Othername}".Trim();
-        public string PhotoUrl { get; set; }
-
-        public ICollection<PhotoForDetailedDto> Photos { get; set; }
     }
 }

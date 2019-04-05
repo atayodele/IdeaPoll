@@ -74,12 +74,12 @@ namespace IdeaSolution.API
             });
 
             //add authorization
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("RequireLoggedIn", policy => policy.RequireRole("User").RequireAuthenticatedUser());
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("RequireLoggedIn", policy => policy.RequireRole("User").RequireAuthenticatedUser());
 
-                options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("User", "Manager").RequireAuthenticatedUser());
-            });
+            //    options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("User", "Manager").RequireAuthenticatedUser());
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

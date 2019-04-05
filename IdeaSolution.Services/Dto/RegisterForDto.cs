@@ -36,7 +36,7 @@ namespace IdeaSolution.Services.Dto
         public string[] Roles { get; set; }
         [Required]
         public string UserName => $"{Email}";
-        public string Fullname => $"{Firstname} {Othername}".Trim();
+        //public string Fullname => $"{Firstname} {Othername}".Trim();
 
 
         public RegisterForDto()
