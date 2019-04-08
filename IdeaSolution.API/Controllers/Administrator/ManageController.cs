@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using IdeaSolution.Data.IGeneric;
+using IdeaSolution.Data.IGeneric.IdeaRepo;
 using IdeaSolution.Data.IGeneric.UserRepo;
 using IdeaSolution.Data.Models;
 using IdeaSolution.Services.Dto;
@@ -24,17 +25,20 @@ namespace IdeaSolution.API.Controllers.Administrator
         private readonly IUserRepository _userRepo;
         private readonly IRepo _repo;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IIdeaRepository _ideaRepo;
 
         public ManageController(
             IMapper mapper,
             IUserRepository userRepo,
             IRepo repo,
-            UserManager<AppUser> userManager)
+            UserManager<AppUser> userManager,
+            IIdeaRepository ideaRepo)
         {
             _mapper = mapper;
             _userRepo = userRepo;
             _repo = repo;
             _userManager = userManager;
+            _ideaRepo = ideaRepo;
         }
 
         [HttpGet]
@@ -84,6 +88,33 @@ namespace IdeaSolution.API.Controllers.Administrator
             if (delete.Succeeded)
                 return Ok("User Deleted Successfully");
             return BadRequest($"Failed to delete user with Id {id}");
+        }
+        [HttpGet("getIdeas")]
+        public async Task<IActionResult> GetIdeas()
+        {
+            var ideas = await _ideaRepo.GetAll();
+            var ideaToReturn = _mapper.Map<IEnumerable<IdeaForListDto>>(ideas);
+            return Ok(ideaToReturn);
+        }
+        [HttpGet("getIdeaById/{id}")]
+        public async Task<IActionResult> GetIdeaById(long id)
+        {
+            var idea = await _ideaRepo.GetIdea(id);
+            var ideaToReturn = _mapper.Map<IdeaForListDto>(idea);
+            return Ok(ideaToReturn);
+        }
+        [HttpDelete("IdeaDelete/{id}")]
+        public async Task<IActionResult> IdeaDelete(long id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var idea = await _ideaRepo.GetIdea(id);
+            if (idea == null)
+                return NotFound($"Could not found idea with an ID of {id}");
+            _repo.Delete(idea);
+            if (await _repo.SaveAll())
+                return Ok("Idea Deleted Successfully");
+            return BadRequest($"Failed to delete idea with Id {id}");
         }
     }
 }

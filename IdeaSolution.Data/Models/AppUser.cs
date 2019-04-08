@@ -22,6 +22,7 @@ namespace IdeaSolution.Data.Models
         public AppUser()
         {
             Photos = new Collection<Photo>();
+            Ideas = new Collection<Idea>();
         }
     }
 }

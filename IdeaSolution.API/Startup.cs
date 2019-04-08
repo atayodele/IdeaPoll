@@ -5,6 +5,7 @@ using AutoMapper;
 using IdeaSolution.Data;
 using IdeaSolution.Data.IGeneric;
 using IdeaSolution.Data.IGeneric.Auth;
+using IdeaSolution.Data.IGeneric.IdeaRepo;
 using IdeaSolution.Data.IGeneric.UserRepo;
 using IdeaSolution.Data.Models;
 using IdeaSolution.Services.Generic;
@@ -42,6 +43,7 @@ namespace IdeaSolution.API
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPhotoRepository, PhotoRepository>();
+            services.AddScoped<IIdeaRepository, IdeaRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

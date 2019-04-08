@@ -12,7 +12,7 @@ namespace IdeaSolution.Services.Dto
         public DateTime DateAdded { get; set; }
         public bool IsRead { get; set; }
         public string FilePath { get; set; }
-        
+
         public string UserId { get; set; }
     }
 }

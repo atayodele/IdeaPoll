@@ -40,6 +40,9 @@ namespace IdeaSolution.Services.Helpers
             CreateMap<UserForUpdateDto, AppUser>();
             CreateMap<PhotoForCreationDto, Photo>();
             CreateMap<Photo, PhotoForReturnDto>();
+            CreateMap<IdeaCreationDto, Idea>();
+            CreateMap<Idea, IdeaForReturnDto>();
+            CreateMap<Idea, IdeaForListDto>();
         }
     }
 }
