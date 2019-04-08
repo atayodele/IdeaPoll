@@ -92,6 +92,16 @@ namespace IdeaSolution.API.Controllers.Administrator
                 return NoContent();
             throw new Exception($"Updating role {id} failed on save");
         }
+        [HttpGet("GetUserByRole/{id}")]
+        public async Task<IActionResult> GetUserByRole(string id)
+        {
+            var role = await _auth.GetRole(id);
+            if (role == null)
+                return NotFound($"Could not found role with an ID of {id}");
+            var findUser = await _userManager.GetUsersInRoleAsync(role.Name);
+            var roleToReturn = _mapper.Map<IEnumerable<UserRoleListDto>>(findUser);
+            return Ok(roleToReturn);
+        }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRole(string id)
         {
@@ -104,16 +114,6 @@ namespace IdeaSolution.API.Controllers.Administrator
             if (delete.Succeeded)
                 return Ok("Role Deleted Successfully");
             return BadRequest($"Failed to delete role with Id {id}");
-        }
-        [HttpGet("GetUserByRole/{id}")]
-        public async Task<IActionResult> GetUserByRole(string id)
-        {
-            var role = await _auth.GetRole(id);
-            if (role == null)
-                return NotFound($"Could not found role with an ID of {id}");
-            var findUser = await _userManager.GetUsersInRoleAsync(role.Name);
-            var roleToReturn = _mapper.Map<IEnumerable<UserRoleListDto>>(findUser);
-            return Ok(roleToReturn);
         }
     }
 }
