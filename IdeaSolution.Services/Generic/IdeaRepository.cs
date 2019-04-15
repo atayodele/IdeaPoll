@@ -18,6 +18,12 @@ namespace IdeaSolution.Services.Generic
         {
             _context = context;
         }
+
+        public int Count(int id)
+        {
+            return _context.Ideas.Count();
+        }
+
         public async Task<IEnumerable<Idea>> GetAll()
         {
             var idea = await _context.Ideas.ToListAsync();

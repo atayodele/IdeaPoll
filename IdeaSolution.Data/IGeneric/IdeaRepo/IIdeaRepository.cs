@@ -10,6 +10,7 @@ namespace IdeaSolution.Data.IGeneric.IdeaRepo
     {
         Task<IEnumerable<Idea>> GetAll();
         Task<Idea> GetIdea(long id); 
-        Task<IEnumerable<Idea>> GetUserIdeas(string userId); 
+        Task<IEnumerable<Idea>> GetUserIdeas(string userId);
+        int Count(int id); 
     }
 }

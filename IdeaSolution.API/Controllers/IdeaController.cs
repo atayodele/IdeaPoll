@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using IdeaSolution.Data;
 using IdeaSolution.Data.IGeneric;
 using IdeaSolution.Data.IGeneric.IdeaRepo;
 using IdeaSolution.Data.IGeneric.UserRepo;

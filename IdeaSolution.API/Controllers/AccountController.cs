@@ -55,8 +55,8 @@ namespace IdeaSolution.API.Controllers
             //var userToReturn = _mapper.Map<UserForDetailedDto>(createUser);
             if (createUser.Succeeded)
             {
-                //await _userManager.AddToRoleAsync(userToCreate, "User");
-                await _userManager.AddToRolesAsync(userToCreate, userRegisterDto.Roles);
+                await _userManager.AddToRoleAsync(userToCreate, "User");
+                //await _userManager.AddToRolesAsync(userToCreate, userRegisterDto.Roles);
                 return Ok(new { email = userRegisterDto.Email, status = 1, message = "Registration Successful" });
             }
             return BadRequest();
@@ -70,12 +70,14 @@ namespace IdeaSolution.API.Controllers
             var userRoles = await _userManager.GetRolesAsync(userFromRepo);
             //generate token
             var tokenHandler = new JwtSecurityTokenHandler();
+            var fullname = userFromRepo.Firstname + " " + userFromRepo.Othername;
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("AppSettings:Token").Value);
             var claims = new List<Claim>
                     {
                     new Claim(JwtRegisteredClaimNames.Sub, userFromRepo.Email),
                     new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.UniqueName, fullname)
                     };
             foreach (var roleName in userRoles)
             {
