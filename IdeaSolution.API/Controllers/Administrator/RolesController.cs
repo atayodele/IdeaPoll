@@ -1,24 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using IdeaSolution.Data.IGeneric;
 using IdeaSolution.Data.IGeneric.Auth;
-using IdeaSolution.Data.IGeneric.UserRepo;
 using IdeaSolution.Data.Models;
 using IdeaSolution.Services.Dto;
-using IdeaSolution.Services.Helpers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IdeaSolution.API.Controllers.Administrator
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase
